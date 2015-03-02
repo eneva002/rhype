@@ -1,4 +1,4 @@
-FLAGS = -ansi -pedantic -Wall -Werror -lcurl
+FLAGS = -ansi -lcurl
 STD = -std=c++11 
 all: bin rhyped
 
