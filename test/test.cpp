@@ -21,14 +21,13 @@ int main(){
   string A, B, C, D;
   if (parsingSuccessful)
   {
-    for (size_t i = 0; i < N; i++)
-    {
-    A = root[i].get("A", "ASCII").asString();
-    B = root[i].get("B", "ASCII").asString();
-    C = root[i].get("C", "ASCII").asString();
-    D = root[i].get("D", "ASCII").asString();
-    //print all of them
-    cout << A << " " << B << " " << C << " " << D << endl;
-    }
+    cout << root << endl;
+    Json::Value test = root.get("test", "null");
+    cout << "++++++++++++++++++" << endl;
+    cout << test << endl;
+    Json::Value test1 = test[1].get("A", "null");
+    cout << "++++++++++++++++++" << endl;
+    cout << test1 << endl;
   }
+
 }
