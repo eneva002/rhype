@@ -20,11 +20,13 @@ Finally, enter the rhype shell with `./rhype`.
 
 ####Basic Commands
 From the shell you have a variety of options:
-`$ update` fetches the latest tracklist from hypem.
-`$ list` lists the current tracklist loaded.
-`$ play` plays the current tracklist in order.
-`$ play -n` plays track n from the tracklist.
-`$ stop` stops the current song.
-`$ pause` pauses the current song. 
-`$ resume` resumes playing where the song was paused.
-`$ help` lists all available commands.
+
+  * `$ update` fetches the latest tracklist from hypem.
+  * `$ list` lists the current tracklist loaded.
+  * `$ play` plays the current tracklist in order.
+  * `$ play -n` plays track n from the tracklist.
+  * `$ stop` stops the current song.
+  * `$ pause` pauses the current song. 
+  * `$ resume` resumes playing where the song was paused.
+  * `$ help` lists all available commands.
+
