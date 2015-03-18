@@ -8,11 +8,12 @@ The songs are played using [mpg123](http://www.mpg123.de/), a popular open sourc
 
 ##How To Get rHype Running
 There are a few things you need before you can build rHype.
+
   * mpg123 (available in apt)
   * python2.7 (available in apt)
   * beautiful soup (available in apt)
 
- Once you have all the dependencies taken care of, cd to your rHype folder and type `make`.
+Once you have all the dependencies taken care of, cd to your rHype folder and type `make`.
 Let everything compile and then cd into the bin folder with `cd bin`.
 Spawn the rhype daemon (rhyped) with `./rhyped`.
 Finally, enter the rhype shell with `./rhype`.
