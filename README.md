@@ -1,18 +1,29 @@
-# rhype
-A desktop music player for hypem.com!
+# rHype
+A desktop music player for the [Hype Machine](www.hypem.com)!
 
-####URL Retreival
+##How It Works
+rHype uses a modified version of fzakaria's [HypeScript](https://github.com/fzakaria/HypeScript) to retreive a list of the current front page songs on HypeM. 
+After retreiving the tracklist, you can play whichever song you like as many times as you like.
+The songs are played using [mpg123](http://www.mpg123.de/), a popular open source audio player.
 
-As it is, the song URLs are hidden away in the depths of HTML. There are two main things that have to be implemented. The first is to parse the HTML from [Hype Machine](www.hypem.com) and locate the JSON encoded server URLs. The second is to decode the JSON and retreive the actual server URL. 
+##How To Get rHype Running
+There are a few things you need before you can build rHype.
+  * mpg123 (available in apt)
+  * python2.7 (available in apt)
+  * beautiful soup (available in apt)
 
-Most of the URL retreival portion of my program is based on [HypeScript](https://github.com/fzakaria/HypeScript), a python script to automatically download files from hypem.
+ Once you have all the dependencies taken care of, cd to your rHype folder and type `make`.
+Let everything compile and then cd into the bin folder with `cd bin`.
+Spawn the rhype daemon (rhyped) with `./rhyped`.
+Finally, enter the rhype shell with `./rhype`.
 
-####Audio
-
-To play data from the stream, I will use `mpg123`.
-
-To install, use `sudo apt-get mpg123` or refer to their [website](http://www.mpg123.de/)
-
-After I have the html acquisition working with audio, I will transition to the daemonization of the program.
-
-
+####Basic Commands
+From the shell you have a variety of options:
+`$ update` fetches the latest tracklist from hypem.
+`$ list` lists the current tracklist loaded.
+`$ play` plays the current tracklist in order.
+`$ play -n` plays track n from the tracklist.
+`$ stop` stops the current song.
+`$ pause` pauses the current song. 
+`$ resume` resumes playing where the song was paused.
+`$ help` lists all available commands.
