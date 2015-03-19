@@ -16,17 +16,16 @@ There are a few things you need before you can build rHype.
 Once you have all the dependencies taken care of, cd to your rHype folder and type `make`.
 Let everything compile and then cd into the bin folder with `cd bin`.
 Spawn the rhype daemon (rhyped) with `./rhyped`.
-Finally, enter the rhype shell with `./rhype`.
+Add the bin folder to your path.
 
 ####Basic Commands
-From the shell you have a variety of options:
+The basic method of controlling rhype is to use `rhype <command>` where command can be any of the following:
 
-  * `$ update` fetches the latest tracklist from hypem.
-  * `$ list` lists the current tracklist loaded.
-  * `$ play` plays the current tracklist in order.
-  * `$ play -n` plays track n from the tracklist.
-  * `$ stop` stops the current song.
-  * `$ pause` pauses the current song. 
-  * `$ resume` resumes playing where the song was paused.
-  * `$ help` lists all available commands.
+  * `update` fetches the latest tracklist from hypem. (working)
+  * `list` lists the current tracklist loaded and indicates the current song.
+  * `play` plays the current tracklist in order.
+  * `stop` stops the current song.
+  * `pause` pauses the current song. 
+  * `resume` resumes playing where the song was paused.
+  * `help` lists all available commands.
 

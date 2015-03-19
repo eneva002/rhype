@@ -12,18 +12,20 @@
 
 using namespace std;
 
-int main()
+int main(int argc, char**argv)
 {
+  if(argc != 2){
+    cout << "Correct usage: `rhype <command>`" << endl;
+    exit(1);
+  }
+
   struct sockaddr_un remote;
-  char str[100];
   
   int sock;
   if((sock = socket(AF_UNIX, SOCK_STREAM, 0)) == -1){
     perror("socket");
     exit(1);
   }
-
-  cout << "Attempting connection ..." << endl;
 
   remote.sun_family = AF_UNIX;
   strcpy(remote.sun_path, SOCK_PATH);
@@ -33,28 +35,21 @@ int main()
     exit(1);
   }
 
-  cout << "Connected." << endl;
+  if(send(sock, argv[1], strlen(argv[1]), 0) ==  -1){
+    perror("send");
+    exit(1);
+  }
 
   int t;
-  while(1)
-  {
-    cout << ">> ";
-    fgets(str, 100, stdin);
-
-    if(send(sock, str, strlen(str), 0) ==  -1){
-      perror("send");
-      exit(1);
-    }
-
-    if((t = recv(sock, str, 100, 0)) > 0){
-      str[t] = '\0';
-      cout << "rHyped$ " << str;
-    }
-    else {
-      if(t < 0) perror("recv");
-      else cout << "Server closed connection"  << endl;
-      exit(1);
-    }
+  char str[100];
+  if((t = recv(sock, str, 100, 0)) > 0){
+    str[t] = '\0';
+    cout << "rHyped$ " << str << endl;
+  }
+  else {
+    if(t < 0) perror("recv");
+    else cout << "Server closed connection"  << endl;
+    exit(1);
   }
   close(sock);
   return  0;
