@@ -13,7 +13,6 @@ There are a few things you need before you can use rHype:
   * python2.7 (available in apt)
   * python-bs4 (available in apt)
   * python-beautifulsoup (available in apt)
-  * libcurl4-gnutls-dev (available in apt)
 
 Once you have the dependencies taken care of, cd into your rHype folder and type `make`.
 Let the program compile and then cd into the bin folder with `cd bin`.
