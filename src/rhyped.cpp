@@ -1,31 +1,42 @@
-#include <iostream> 
-#include <vector> 
-#include "Python.h"
-#include <unistd.h> 
-#include <stdlib.h>
-#include <string.h> 
 #include <sys/socket.h> 
 #include <sys/types.h> 
-#include <stdio.h>
-#include <errno.h>
-#include <sys/un.h>
+#include <sys/stat.h>
 #include <algorithm>
-#include <string>
+#include <iostream> 
+#include <sys/un.h>
+#include <unistd.h> 
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
+#include <fcntl.h>
+#include <errno.h>
 #include <ctype.h>
+#include <fstream>
+#include <string>
+#include <vector> 
+
+#include "curl/curl.h"
+#include "Python.h"
 
 #define SOCK_PATH "hyped_socket"
 
 int getTracks();
-void loadTracks();
+int loadTracks();
+int dlSong(int);
 
 using namespace std;
 
 struct track{
   int id;
   string artist;
-  string track;
+  string trackname;
   string url;
 };
+
+//global vector to store tracks
+vector<track> tracks;
+//global int to store current track
+int currentsong = -1;
 
 int main()
 {
@@ -80,13 +91,35 @@ int main()
 
     //COMMANDS AND STUFF BEGIN HERE
     if(0 == strcmp(str, "update")){
-      if(0 != getTracks()) strcpy(response, "update failed");
+      if(0 != getTracks()) strcpy(response, "update failed\n");
       else{
-        strcpy(response, "update successful");
-        loadTracks();
+        if(0 != loadTracks()) strcpy(response, "load failed\n");
+        else strcpy(response, "update successful!\n");
       }
     }
-    else strcpy(response, "unknown command");
+    else if(0 == strcmp(str, "list")){
+      if(!tracks.empty()){
+        for(int i = 0; i < tracks.size(); ++i){
+          if(i == currentsong) sprintf(response, "-%d", i+1);
+          else sprintf(response, "%d", i+1);
+          strcat(response, ": ");
+          strcat(response, tracks.at(i).artist.c_str());
+          strcat(response, " - ");
+          strcat(response, tracks.at(i).trackname.c_str());
+          strcat(response, "\n");
+          if(-1 == send(sock2, response, strlen(response), 0)){
+            perror("send");
+          }
+          memset(response, 0, 100);
+        }
+      }
+      else strcpy(response, "tracklist unavailable, please update\n");
+    }
+    else if(0 == strcmp(str, "play")){
+      dlSong(0);
+    }
+    else strcpy(response, "unrecognized command\n");
+    memset(str, 0, 100);
     if(-1 == send(sock2, response, strlen(response), 0)) perror("send");
     close(sock2);
   }
@@ -109,6 +142,38 @@ int getTracks()
   return 0;
 }
 
-void loadTracks(){
-  return;
+int loadTracks(){
+  tracks.clear();
+  ifstream fin("track.list");
+  if(!fin.is_open()){
+    return -1;
+  }
+  int i = 0;
+  string loader;
+  track newtrack;
+  while(getline(fin, loader)){
+    tracks.push_back(newtrack);
+    tracks.at(i).id = i;
+    getline(fin, tracks.at(i).trackname);
+    getline(fin, tracks.at(i).artist);
+    getline(fin, tracks.at(i).url);
+    ++i;
+  }
+  fin.close();
+  return 0;
+}
+
+//return the PID of child process for signal stuff
+int dlSong(int trackno)
+{
+  if(trackno != currentsong){
+    char cmd[500] = "wget -O tmp.mp3 ";  
+    strcat(cmd, tracks.at(trackno).url.c_str()); 
+    strcat(cmd, " &&  mpg123 tmp.mp3");
+    system(cmd); 
+    memset(cmd, 0, 500);
+    strcpy(cmd, "rm tmp.mp3");
+    system(cmd);
+  }
+  return 0;
 }

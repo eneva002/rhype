@@ -42,14 +42,13 @@ int main(int argc, char**argv)
 
   int t;
   char str[100];
-  if((t = recv(sock, str, 100, 0)) > 0){
+  while((t = recv(sock, str, 100, 0)) > 0){
     str[t] = '\0';
-    cout << "rHyped$ " << str << endl;
-  }
-  else {
-    if(t < 0) perror("recv");
-    else cout << "Server closed connection"  << endl;
-    exit(1);
+    cout << str;
+    if(t < 0){
+      perror("recv");
+      break;
+    }
   }
   close(sock);
   return  0;
