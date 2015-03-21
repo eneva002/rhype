@@ -17,7 +17,6 @@
 #include <string>
 #include <vector> 
 
-#include "curl/curl.h"
 #include "Python.h"
 
 #define SOCK_PATH "hyped_socket"

@@ -21,8 +21,8 @@ Spawn the rhype daemon (rhyped) with `rhyped`.
 ####Basic Commands
 The basic method of controlling rhype is to use `rhype <command>` where command can be any of the following:
 
-  * `update` fetches the latest tracklist from hypem. (working)
-  * `list` lists the current tracklist loaded and indicates the current song. (working)
+  * `update` fetches the latest tracklist from hypem.
+  * `list` lists the current tracklist loaded and indicates the current song. 
   * `play` plays the current tracklist in order from the beginning.
   * `stop` stops the current song.
   * `skip` skips the current song.
@@ -31,7 +31,7 @@ The basic method of controlling rhype is to use `rhype <command>` where command 
   * `help` lists all available commands.
 
 ##The Future Of rHype
-This project is by no means complete or anywhere near the quality that I'd like it to be. 
+This project is work in progress.
 If you like the project or want to contribute, I encourage you to submit issues or pull requests.
 My repo can be found [here](https://github.com/eneva002/rhype).
 
