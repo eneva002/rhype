@@ -4,6 +4,8 @@
 #include <unistd.h>
 #include <string.h>
 #include <sys/socket.h>
+#include <signal.h>
+#include <fstream>
 #include <sys/types.h>
 #include <sys/un.h>
 #include <stdlib.h>
@@ -19,6 +21,59 @@ int main(int argc, char**argv)
     exit(1);
   }
 
+  char *home = getenv("HOME");
+  strcat(home, "/rhype");
+
+  if(-1 == chdir(home))
+  {
+    perror("couldn't find home");
+    exit(1);
+  }
+
+  ifstream fin("pid");
+  if(!fin.is_open()) perror("PID FILE NOT FOUND");
+  string crhypedID;
+  getline(fin, crhypedID);
+  fin.close();
+  int rhypedID = atoi(crhypedID.c_str());
+
+  if(!strcmp(argv[1], "stop"))
+  {
+    kill(rhypedID, SIGQUIT);
+    return 0;
+  }
+  else if(!strcmp(argv[1], "pause"))
+  {
+    kill(rhypedID, SIGTSTP);
+    return 0;
+  }
+  else if(!strcmp(argv[1], "resume"))
+  {
+    kill(rhypedID, SIGCONT);
+    return 0;
+  }
+  else if(!strcmp(argv[1], "skip"))
+  {
+    kill(rhypedID, SIGINT);
+    return 0;
+  }
+  else if(!strcmp(argv[1], "help"))
+  {
+    cout << "`update` fetches the latest playlist from hypem" << endl;
+    cout << "`list` displays the current playlist" << endl;
+    cout << "`play` plays all songs in the playlist from the beginning" <<  endl;
+    cout << "`stop` stops the player" << endl;
+    cout << "`skip` skips the current song" <<endl;
+    cout << "`pause` pauses the player"  << endl;
+    cout << "`resume` resumes playing" << endl;
+    cout << "`help` does this "  << endl;
+    return 0;
+  }
+  else if(strcmp(argv[1], "update") && strcmp(argv[1], "play") && strcmp(argv[1], "list")) {
+    cout << "invalid command, use `rhype help` for reference" << endl;
+    exit(1);
+  }
+      
   struct sockaddr_un remote;
   
   int sock;

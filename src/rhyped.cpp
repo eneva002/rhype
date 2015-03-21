@@ -1,9 +1,11 @@
 #include <sys/socket.h> 
 #include <sys/types.h> 
 #include <sys/stat.h>
+#include <sys/wait.h>
 #include <algorithm>
 #include <iostream> 
 #include <sys/un.h>
+#include <signal.h>
 #include <unistd.h> 
 #include <stdlib.h>
 #include <string.h>
@@ -23,6 +25,7 @@
 int getTracks();
 int loadTracks();
 int dlSong(int);
+void  parse(char *, char **);
 
 using namespace std;
 
@@ -37,16 +40,38 @@ struct track{
 vector<track> tracks;
 //global int to store current track
 int currentsong = -1;
+pid_t currentpid = -1;
+int g_i;
+
+void sig_handler(int signum)
+{
+  if(signum == SIGQUIT) g_i = tracks.size();
+  if(currentpid > 0)
+  {
+    kill(currentpid, signum);
+  }
+}
 
 int main()
 {
+  //leave cwd the same because i'm changing it anyways
+  //ignore cin/out/err
+  if(0 != daemon(1, 0)) perror("daemon");
 
-  //leave cwd the same
-  //leave std in/out/err  alone
-  //if(0 != daemon(1, 1)) perror("daemon");
+  char *home = getenv("HOME");
+  strcat(home, "/rhype");
 
+  if(-1 == chdir(home))
+  {
+    perror("couldn't find home");
+    exit(1);
+  }
+
+  ofstream fout("pid");
   //for debugging purposes
   pid_t pid = getpid();
+  fout << pid << endl;
+  fout.close();
   //cout << endl;
   cout << "session PID: " << pid << endl;
   cout << "cwd: " << get_current_dir_name() << endl;
@@ -73,6 +98,13 @@ int main()
     exit(1);
   }
 
+  char *cmdv[3];
+  cmdv[0] = strdup("mpg123");
+  cmdv[1] = strdup("tmp.mp3");
+  cmdv[2] = NULL; 
+
+  cout << cmdv[0] << " " << cmdv[1] << endl << flush;
+
   while(1)
   {
     int done, n, sock2;
@@ -97,6 +129,9 @@ int main()
         else strcpy(response, "update successful!\n");
       }
     }
+    else if(0 == strcmp(str, "exit")){
+      exit(0);
+    }
     else if(0 == strcmp(str, "list")){
       if(!tracks.empty()){
         for(int i = 0; i < tracks.size(); ++i){
@@ -116,7 +151,34 @@ int main()
       else strcpy(response, "tracklist unavailable, please update\n");
     }
     else if(0 == strcmp(str, "play")){
-      dlSong(0);
+      for(g_i = 0; g_i < tracks.size(); ++g_i)
+      {
+        dlSong(g_i);
+        currentpid = fork(); 
+        if(currentpid < 0) perror("fork");
+        else if(currentpid == 0)
+        {
+          signal(SIGINT, SIG_DFL);
+          signal(SIGQUIT, SIG_DFL);
+          signal(SIGTSTP, SIG_DFL);
+          signal(SIGCONT, SIG_DFL);
+          close(sock2);
+          execvp(cmdv[0], cmdv);
+        }
+        else 
+        {
+          signal(SIGINT, sig_handler);
+          signal(SIGQUIT, sig_handler);
+          signal(SIGTSTP, sig_handler);
+          signal(SIGCONT, sig_handler);
+          strcpy(response, "playing all songs\n");
+          if(-1 == send(sock2, response, strlen(response), 0)) perror("send");
+          close(sock2);
+          if(-1 == wait(0)) perror("wait");
+          currentpid = -1;
+          continue;
+        }
+      }
     }
     else strcpy(response, "unrecognized command\n");
     memset(str, 0, 100);
@@ -169,11 +231,20 @@ int dlSong(int trackno)
   if(trackno != currentsong){
     char cmd[500] = "wget -O tmp.mp3 ";  
     strcat(cmd, tracks.at(trackno).url.c_str()); 
-    strcat(cmd, " &&  mpg123 tmp.mp3");
-    system(cmd); 
-    memset(cmd, 0, 500);
-    strcpy(cmd, "rm tmp.mp3");
     system(cmd);
   }
   return 0;
+}
+
+void parse(char *line, char **argv)
+{
+  while (*line != '\0') {       /* if not the end of line ....... */ 
+    while (*line == ' ' || *line == '\t' || *line == '\n')
+      *line++ = '\0';     /* replace white spaces with 0    */
+    *argv++ = line;          /* save the argument position     */
+    while (*line != '\0' && *line != ' ' && 
+      *line != '\t' && *line != '\n') 
+    line++;             /* skip the argument until ...    */
+  }
+  *argv = '\0';                 /* mark the end of argument list  */
 }
