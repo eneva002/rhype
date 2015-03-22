@@ -1,13 +1,13 @@
 #rhype
 rhype is a command line music player for the [Hype Machine](http://hypem.com/).
-A modified version of fzakaria's [HypeScript](https://github.com/fzakaria/HypeScript) to retreive a list of the current front page songs on HypeMachine.
+A modified version of fzakaria's [HypeScript](https://github.com/fzakaria/HypeScript) is used to retreive a list of the current front page songs on HypeMachine.
 After retreiving the tracklist, you can play the tracklist in order.
 Music is played using [mpg123](http://www.mpg123.de/), a popular open source audio player.
 
 The type of music that is played depends entirely on the music that hypem is posting.
 Currently, rhype only looks at the [popular](http://hypem.com/popular) section of hypem.
 According to hypem, this section contains "The most popular artists, searches and blogs on the internet right now".
-If you're curious about how their aggregator works, I encourage you to take a look at their [about](http://hypem.com/about) page.
+If you're curious about how their aggregator works, I encourage you to take a look at their [about page](http://hypem.com/about).
 
 ##Installing rhype
 To install rhype, do the following:
@@ -27,7 +27,7 @@ There are a few things you need before you can use rhype:
   * python-bs4 (available in apt)
   * python-beautifulsoup (available in apt)
 
-####Basic Commands
+##Basic Usage 
 After rhype has been installed, spawn the rhype daemon with
 
 ```
