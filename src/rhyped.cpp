@@ -58,7 +58,7 @@ int main()
   if(0 != daemon(1, 0)) perror("daemon");
 
   char *home = getenv("HOME");
-  strcat(home, "/rhype");
+  strcat(home, "/rhypefiles");
 
   if(-1 == chdir(home))
   {

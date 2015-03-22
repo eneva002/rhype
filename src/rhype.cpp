@@ -22,7 +22,7 @@ int main(int argc, char**argv)
   }
 
   char *home = getenv("HOME");
-  strcat(home, "/rhype");
+  strcat(home, "/rhypefiles");
 
   if(-1 == chdir(home))
   {
@@ -31,7 +31,7 @@ int main(int argc, char**argv)
   }
 
   ifstream fin("pid");
-  if(!fin.is_open()) perror("PID FILE NOT FOUND");
+  if(!fin.is_open()) perror("daemon PID not found");
   string crhypedID;
   getline(fin, crhypedID);
   fin.close();
@@ -69,7 +69,10 @@ int main(int argc, char**argv)
     cout << "`help` does this "  << endl;
     return 0;
   }
-  else if(strcmp(argv[1], "update") && strcmp(argv[1], "play") && strcmp(argv[1], "list")) {
+  else if(strcmp(argv[1], "update") 
+          && strcmp(argv[1], "play") 
+          && strcmp(argv[1], "list")
+          && strcmp(argv[1], "exit")) {
     cout << "invalid command, use `rhype help` for reference" << endl;
     exit(1);
   }
@@ -86,7 +89,7 @@ int main(int argc, char**argv)
   strcpy(remote.sun_path, SOCK_PATH);
   int len = strlen(remote.sun_path) + sizeof(remote.sun_family);
   if(connect(sock, (struct sockaddr*)&remote, len) == -1){
-    perror("connect");
+    perror("could not connect with rhyped");
     exit(1);
   }
 
